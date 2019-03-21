@@ -26,14 +26,14 @@
     owner: root
     group: root
     mode: 0644
-  when: consul_s3_source is not defined and (consul_installed_version|failed or consul_installed_version.stdout != consul_version)
+  when: consul_s3_source is not defined and (consul_installed_version is failed or consul_installed_version.stdout != consul_version)
   tags: ['consul']
 
 - name: "Get consul checksum"
   shell: "grep consul_{{ consul_version }}_{{ consul_platform }}.zip /tmp/consul_{{ consul_version }}_SHA256SUMS"
   register: consul_sha256
   changed_when: false
-  when: consul_s3_source is not defined and (consul_installed_version|failed or consul_installed_version.stdout != consul_version)
+  when: consul_s3_source is not defined and (consul_installed_version is failed or consul_installed_version.stdout != consul_version)
   tags: ['consul']
 
 - name: "Download consul"
@@ -44,7 +44,7 @@
     owner: root
     group: root
     mode: 0644
-  when: consul_s3_source is not defined and (consul_installed_version|failed or consul_installed_version.stdout != consul_version)
+  when: consul_s3_source is not defined and (consul_installed_version is failed or consul_installed_version.stdout != consul_version)
   tags: ['consul']
 
 - name: "Download consul (s3)"
@@ -52,7 +52,7 @@
     aws s3 cp \
       {{ consul_s3_source }} \
       /tmp/consul_{{ consul_version }}_{{ consul_platform }}.zip
-  when: consul_s3_source is defined and (consul_installed_version|failed or consul_installed_version.stdout != consul_version)
+  when: consul_s3_source is defined and (consul_installed_version is failed or consul_installed_version.stdout != consul_version)
   tags: ['consul']
 
 - name: "Make sure that unzip is installed"
@@ -67,7 +67,7 @@
     owner: root
     group: root
     mode: 0755
-  when: consul_installed_version|failed or consul_installed_version.stdout != consul_version
+  when: consul_installed_version is failed or consul_installed_version.stdout != consul_version
   notify: Restart consul
   tags: ['consul']
 
